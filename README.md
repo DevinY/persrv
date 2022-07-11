@@ -47,6 +47,7 @@ DRIVE_PORT=2223
 
 ./start 啟用
 ./stop 停用
+./stop <project_name> 停用啟動中，非.env設定中的專案服務。
 ./relaod 重整nginx設定
 ./info 顯示.env資訊
 ./syn_auth.sh 同步自己的公鑰到authorized_keys中，用於ssh驗證
