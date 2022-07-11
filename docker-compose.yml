@@ -1,0 +1,70 @@
+version: '3.6'
+services:
+#=== web service ======================
+ web:
+  build:
+    context: ./dockerfiles
+    dockerfile: Dockerfile-nginx
+  image: nginx1000
+  dns: 8.8.8.8
+  depends_on:
+    - php
+  ports:
+    - ${HTTP_PORT-80}:80
+    - ${HTTPS_PORT-443}:443
+  volumes:
+  - ${FOLDER-./project}:/var/www/html
+  - ./etc:/etc/nginx/conf.d
+  networks:
+    - dlaravel_net
+  
+#=== php service ==========================
+ php:
+  image: deviny/fpm:8.1.8
+  volumes:
+    - ./etc/php:/usr/local/etc/php/conf.d
+    - ${FOLDER-./project}:/var/www/html
+    - ./etc/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    - ./etc/cache:/home/dlaravel/.composer/cache
+  environment:
+    - TZ=Asia/Taipei
+    - project=${HOST-localhost}
+  networks:
+    - dlaravel_net
+#=========== vscode Remote ssh =================
+ ssh:
+  image: deviny/fpm:8.1.8-ssh
+  ports:
+    - ${SSH_PORT-2222}:22
+  working_dir: /var/www/hml
+  volumes:
+    - ./etc/code-server:/home/dlaravel/.vscode-server
+    - ./authorized_keys:/home/dlaravel/.ssh/authorized_keys
+    - ${FOLDER-./project}:/var/www/html
+#=== openssh ===============================      
+ drive:
+  build:
+    context: ./dockerfiles
+    dockerfile: Dockerfile-drive
+  image: ${PROJECT-persrv_drive}
+  ports:
+    - ${DRIVE_PORT-2223}:22
+  volumes:
+    - ${FOLDER-./project}:/var/www/html
+#===== database ============
+ db:
+  image: mariadb:10.5.5
+  hostname: db
+  ports:
+    - ${DB_PORT-3306}:3306
+  volumes:
+    - ./data:/var/lib/mysql
+  environment:
+    - MYSQL_ALLOW_EMPTY_PASSWORD= "yes"
+    - TZ=Asia/Taipei
+  networks:
+    - dlaravel_net
+
+#=== top-level netowks key ======================
+networks:
+    dlaravel_net:

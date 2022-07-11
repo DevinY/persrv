@@ -1,0 +1,2 @@
+From nginx:1.23.0
+RUN sed -i 's/nginx:x:101/nginx:x:1000/g' /etc/passwd

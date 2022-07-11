@@ -1,0 +1,12 @@
+#!/bin/bash
+if [ -f .env ];then
+    source .env
+    touch authorized_keys
+    if [ $1 ];then
+        PROJECT=$1
+    fi
+    docker-compose -p ${PROJECT}  up -d
+    echo ${APP_URL}
+else
+    echo ".env not found"
+fi

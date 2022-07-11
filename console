@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ ! -f .env ];then
+    echo "dot env file is required."
+    exit
+fi
+source .env
+source .functions.sh
+docker-compose -p ${PROJECT} $@

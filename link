@@ -1,0 +1,46 @@
+#!/bin/bash
+#echo "Before You change env, make sure stop current project you are running"
+#檢測是否有env檔存在，不存再就建立
+NUM=$(ls -1 envs|wc -l)
+if [ $NUM -eq 0 ];then
+    echo "APP_URL=http://127.0.0.1" > envs/default
+    echo "PROJECT=PROJECT_NAME" >> envs/default
+    echo "FOLDER=./project" >> envs/default
+    echo "Default env not found, create default to envs folder."
+    echo "You can now edit your .env file to start up."
+    ln -sf envs/default .env
+    exit
+fi
+
+
+if [ -f .env ]; then
+    LINE=$(./console ps|wc -l)
+    if [ $LINE -gt 2 ]; then
+        ./console stop
+    fi
+fi
+
+echo "Type number to select your project environment:"
+array="$(cd envs&&ls *|sort)"
+touch authorized_keys
+
+ select option in ${array[@]}
+do
+    case $option in
+        *) 
+            if [ ! $option ];then
+                    break
+                else
+                        ln -sf envs/$option .env
+                        ls -l .env|sed -E "s/^(l.*->)(.*)/.env link to\2/g"
+                        . .env
+                        if [ ! -d $FOLDER ];then
+                            echo "Cant not found project folder ${FOLDER}"
+                            exit
+                        fi
+                        . ./start
+                    break
+            fi
+            ;;
+    esac
+done
