@@ -32,7 +32,7 @@ FOLDER=指定專案路徑
 ./console build drive
 </pre>
 
-預設開啟的連接埠可在.env中調整
+預設開啟的連接埠可在.env中加入特定的項目來變更預設的連接埠。
 
 <pre>
 HTTP_PORT=80
